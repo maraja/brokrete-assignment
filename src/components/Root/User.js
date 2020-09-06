@@ -1,9 +1,14 @@
 import gql from "graphql-tag";
 import React, { Component, useState, useEffect } from "react";
 
-import { Form, Input, Button, Select, message } from 'antd';
+import { Form, Input, Button, Select, message, Layout } from 'antd';
+// import { Layout } from 'antd';
 
-import Layout from '../Shared/Layout'
+const { Header, Footer, Sider, Content } = Layout;
+
+// import Layout from '../Shared/Layout'
+
+
 import {formatError} from '#root/api/formatError'
 
 
@@ -23,7 +28,10 @@ const User = (props) => {
 
   return (
     <Layout>
-    <h1>User info.</h1>
+      <Sider style={{background: 'white'}}>Sider</Sider>
+      <Layout style={{background: 'white'}}>
+        <Content>Content</Content>
+      </Layout>
     </Layout>
   )
 };
