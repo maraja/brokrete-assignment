@@ -1,3 +1,3 @@
 export default {
-    github_token: 'b9291024136d5771068c81ff02fb32485b632dbf'
+    github_token: process.env.GITHUB_TOKEN
 }

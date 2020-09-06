@@ -6,7 +6,7 @@ import React from "react";
 
 const Container = (props) => {
   return (
-    <Layout style={{minHeight: '100vh', padding: "20px 15%"}}>
+    <Layout style={{minHeight: '100vh', padding: "20px 15%", background: 'white'}}>
         <Content>
             {props.children}
         </Content>
