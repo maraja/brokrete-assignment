@@ -7,7 +7,9 @@ import {
 import CentreContainer from '../Shared/CentreContainer'
 import Layout from '../Shared/Layout'
 
-import { AutoComplete } from 'antd';
+import { AutoComplete, Input } from 'antd';
+
+const { Search } = Input;
 
 import config from '../../config'
 console.log(config)
@@ -23,25 +25,17 @@ const graphqlWithAuth = graphql.defaults({
 
 
 const Home = ({}) => {
-  const [value, setValue] = useState('');
-  const [options, setOptions] = useState([]);
+  const [data, setData] = useState([]);
 
-  const onSearch = async (searchText) => {
+  const onSearch = async (e) => {
+    let searchText = e.target.value;
     if (searchText.length >= 2){
       const {search} = await graphqlWithAuth(searchUser(searchText));
-      setOptions(search.nodes.map(n => { return {value: `${n.name} | ${n.login}`} }))
+      setData(search.nodes)
     } else {
-      setOptions([])
+      setData([])
     }
-    // setOptions([{ value: "some random string" }]);
-  };
-
-  const onSelect = (data) => {
-    console.log('onSelect', data);
-  };
-
-  const onChange = (data) => {
-    setValue(data);
+    console.log(data)
   };
 
 
@@ -69,21 +63,25 @@ const Home = ({}) => {
 
   return (
     <Layout>
-    <CentreContainer>
-      <h1>Welcome home!</h1>
-      <AutoComplete
-        options={options}
+      <Input
+        placeholder="input search text"
+        onChange={onSearch}
         style={{ width: 200 }}
-        onSelect={onSelect}
-        onSearch={onSearch}
-        placeholder="input here"
       />
-    </CentreContainer>
+      {data.map(user => <UserCard user={user} />)}
     </Layout>
   )
 };
 
 export default Home;
+
+
+const UserCard = ({ user }) => (
+  <div>
+    <h1>{user.name}</h1>
+    <h2>{user.login}</h2>
+  </div>
+)
 
 
 const searchUser = username => `
