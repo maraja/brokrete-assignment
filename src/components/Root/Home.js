@@ -85,8 +85,8 @@ const UserList = ({ data, searchText }) => {
 
   const onChange = page => {
     setCurrent(page)
-    console.log(current, page, numPerPage, page*numPerPage, page*(numPerPage+1))
-    console.log(data.slice(page*numPerPage, page*(numPerPage+1)))
+    // console.log(current, page, numPerPage, page*numPerPage, page*(numPerPage+1))
+    // console.log(data.slice(page*numPerPage, page*(numPerPage+1)))
   }
 
   return (
@@ -124,7 +124,7 @@ const UserList = ({ data, searchText }) => {
         )}
       />
       <br/>
-      <Pagination current={current} onChange={onChange} total={data.length} />
+      <Pagination current={current} onChange={onChange} total={data.length} hideOnSinglePage={true} size={"small"} showSizeChanger={false}/>
       </React.Fragment>
     }
     </div>
