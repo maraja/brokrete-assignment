@@ -1,9 +1,10 @@
 import gql from "graphql-tag";
 import React, { Component, useState, useEffect } from "react";
 
-import { Form, Input, Button, Select, message, Layout } from 'antd';
+import { Form, Input, Button, Select, message, Layout, Tabs } from 'antd';
 // import { Layout } from 'antd';
 
+const { TabPane } = Tabs;
 const { Header, Footer, Sider, Content } = Layout;
 
 // import Layout from '../Shared/Layout'
@@ -27,10 +28,25 @@ const User = (props) => {
   console.log(props.match.params.id)
 
   return (
-    <Layout>
-      <Sider style={{background: 'white'}}>Sider</Sider>
+    <Layout style={{paddingTop: 50, background: 'white'}}>
+      <Sider style={{background: 'white'}}></Sider>
       <Layout style={{background: 'white'}}>
-        <Content>Content</Content>
+        <Content>
+          <Tabs defaultActiveKey="1" onChange={() => {}}>
+            <TabPane tab="Overview" key="1">
+              Content of Tab Pane 1
+            </TabPane>
+            <TabPane tab="Repositories" key="2">
+              Content of Tab Pane 2
+            </TabPane>
+            <TabPane tab="Projects" key="3">
+              Content of Tab Pane 3
+            </TabPane>
+            <TabPane tab="Packages" key="4">
+              Content of Tab Pane 4
+            </TabPane>
+          </Tabs>
+        </Content>
       </Layout>
     </Layout>
   )
