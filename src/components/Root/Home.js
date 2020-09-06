@@ -7,7 +7,7 @@ import {
 import CentreContainer from '../Shared/CentreContainer'
 import Layout from '../Shared/Layout'
 
-import { AutoComplete, Input } from 'antd';
+import { AutoComplete, Input, List, Avatar } from 'antd';
 
 const { Search } = Input;
 
@@ -68,7 +68,8 @@ const Home = ({}) => {
         onChange={onSearch}
         style={{ width: 200 }}
       />
-      {data.map(user => <UserCard user={user} />)}
+      <UserList data={data} />
+      {/* {data.map(user => <UserCard user={user} />)} */}
     </Layout>
   )
 };
@@ -76,11 +77,20 @@ const Home = ({}) => {
 export default Home;
 
 
-const UserCard = ({ user }) => (
-  <div>
-    <h1>{user.name}</h1>
-    <h2>{user.login}</h2>
-  </div>
+const UserList = ({ data }) => (
+  <List
+    itemLayout="horizontal"
+    dataSource={data}
+    renderItem={item => (
+      <List.Item>
+        <List.Item.Meta
+          avatar={<Avatar src={item.avatarUrl} />}
+          title={<a href="https://ant.design">{item.name || item.login}</a>}
+          description={item.bio}
+        />
+      </List.Item>
+    )}
+  />
 )
 
 
@@ -95,6 +105,7 @@ const searchUser = username => `
         name
         login
         url
+        avatarUrl
       }
     }
   }
