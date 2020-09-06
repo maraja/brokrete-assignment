@@ -66,7 +66,6 @@ const Home = ({}) => {
       <Input
         placeholder="input search text"
         onChange={onSearch}
-        style={{ width: 200 }}
       />
       <UserList data={data} />
       {/* {data.map(user => <UserCard user={user} />)} */}
@@ -96,7 +95,7 @@ const UserList = ({ data }) => (
 
 const searchUser = username => `
 {
-  search(query: "${username}", type: USER, first: 10) {
+  search(query: "${username}", type: USER, first: 15) {
     nodes {
       ... on User {
         id
