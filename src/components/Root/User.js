@@ -1,13 +1,15 @@
 import gql from "graphql-tag";
 import React, { Component, useState, useEffect } from "react";
 
-import { Form, Input, Button, Select, message, Layout, Tabs } from 'antd';
+import { Form, Input, Button, Select, message, Layout, Tabs, Row, Col, Badge, Skeleton, Tag } from 'antd';
 // import { Layout } from 'antd';
 
 const { TabPane } = Tabs;
 const { Header, Footer, Sider, Content } = Layout;
 
-// import Layout from '../Shared/Layout'
+import { StarOutlined, ForkOutlined } from '@ant-design/icons';
+
+import Container from '../Shared/Container'
 
 
 import {formatError} from '#root/api/formatError'
@@ -35,7 +37,7 @@ const tailLayout = {
 
 const User = (props) => {
   console.log(props.match.params.id)
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
   const [searchText, setSearchText] = useState("");
 
   const onSearch = async (e) => {
@@ -53,20 +55,23 @@ const User = (props) => {
   useEffect(() => {
     (async () => {
       const {user} = await graphqlWithAuth(queryUser(props.match.params.id));
+      setData(user)
       console.log(user)
     })()
   }, [])
 
   return (
     <Layout style={{paddingTop: 50, background: 'white'}}>
+      <Container>
       <Sider style={{background: 'white'}}></Sider>
       <Layout style={{background: 'white'}}>
         <Content>
           <Tabs defaultActiveKey="1" onChange={() => {}}>
             <TabPane tab="Overview" key="1">
-              Content of Tab Pane 1
+              {data && <PopularRepositories repositories={data.topRepositories.nodes} />}
+              {!data && <Skeleton active />}
             </TabPane>
-            <TabPane tab="Repositories" key="2">
+            <TabPane tab={`Repositories ${data ? "("+data.topRepositories.totalCount+")" : ''}`} key="2">
               Content of Tab Pane 2
             </TabPane>
             <TabPane tab="Projects" key="3">
@@ -78,6 +83,7 @@ const User = (props) => {
           </Tabs>
         </Content>
       </Layout>
+      </Container>
     </Layout>
   )
 };
@@ -87,9 +93,33 @@ export default User;
 const PopularRepositories = ({repositories}) => {
 
   return (
-    <></>
+    <div> 
+      <Row gutter={[16, 16]}>
+        {repositories.map(r => (
+          <Col span={12}>
+            <RepositoryCard repository={r} />
+          </Col>
+        ))}
+      </Row>
+    </div>
   )
 }
+
+const RepositoryCard = ({repository}) => (
+  <div style={{ border: 'solid 1px #eee', padding: '10px 20px 0px 20px', borderRadius: 5 }}>
+    <h3>{repository.name}</h3>
+    <p>{repository.description}</p>
+    <p>
+      { repository.primaryLanguage && <Badge color={repository.primaryLanguage.color} text={repository.primaryLanguage.name}/> }
+      <Count text={repository.stargazers.totalCount} icon={<StarOutlined />}/>
+      <Count text={repository.forks.totalCount} icon={<ForkOutlined />}/>
+    </p>
+  </div>
+)
+
+const Count = ({ text, icon }) => (
+  <span style={{margin: '0 5px'}}>{icon} {text}</span>
+)
 
 const queryUser = username => `
 {
@@ -103,20 +133,32 @@ const queryUser = username => `
     location
     topRepositories(orderBy: {field: CREATED_AT, direction: ASC}, first: 10) {
       nodes {
-        pullRequests(first: 10) {
+        pullRequests {
           totalCount
         }
-        issues(first: 10) {
+        issues {
           totalCount
         }
         url
-        watchers(first: 10) {
+        watchers {
           totalCount
         }
-        stargazers(first: 10) {
+        homepageUrl
+        description
+        name
+        stargazers {
+          totalCount
+        }
+        primaryLanguage {
+          color
+          id
+          name
+        }
+        forks {
           totalCount
         }
       }
+      totalCount
     }
   }
 }
