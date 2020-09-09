@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "watch": "parcel --port=8000 src/index.html",
-    "build": "del /f dist && cross-env NODE_ENV=production parcel build src/index.html"
+    "build": "parcel build src/index.html"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
