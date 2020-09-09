@@ -1,5 +1,6 @@
 # Brokrete Technical Assignment
 > This project is aimed to develop a GitHub clone while utilizing GitHub's new GraphQL v4 API.
+The project is hosted and can be found here: https://brokrete-github-clone.netlify.app/
 
 ## Table of contents
 * [General info](#general-info)
@@ -29,6 +30,7 @@ List of features ready and TODOs for future development
 To-do list:
 * Continue to fix styling and make more "replica-like"
 * Work on mobile compatibility.
+* Include proxy server to hide GitHub API token in the future.
 
 
 ## Contact
