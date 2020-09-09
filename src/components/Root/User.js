@@ -158,7 +158,7 @@ const PopularRepositories = ({repositories}) => {
 
 const RepositoryCard = ({repository}) => (
   <div style={{ border: 'solid 1px #eee', padding: '10px 20px 0px 20px', borderRadius: 5 }}>
-    <h3><Link to={repository.url}>{repository.name}</Link></h3>
+    <h3><a href={repository.url}>{repository.name}</a></h3>
     <p><Text type="secondary" style={{marginBottom: 10}}>{repository.description}</Text></p>
     <p>
       { repository.primaryLanguage && <Badge color={repository.primaryLanguage.color} text={repository.primaryLanguage.name}/> }
