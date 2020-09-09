@@ -42,35 +42,15 @@ const Home = ({}) => {
 
 
   useEffect(() => {
-    // (async () => {
-    //   const {search} = await graphqlWithAuth(`
-    //   {
-    //     search(query: "maraja", type: USER, first: 10) {
-    //       nodes {
-    //         ... on User {
-    //           id
-    //           email
-    //           bio
-    //           name
-    //           login
-    //           url
-    //         }
-    //       }
-    //     }
-    //   }
-    // `);
-    // console.log(repository)
-    // })()
   }, [])
 
   return (
     <Layout>
       <Input
-        placeholder="input search text"
+        placeholder="Search users"
         onChange={onSearch}
       />
       <UserList data={data} searchText={searchText}/>
-      {/* {data.map(user => <UserCard user={user} />)} */}
     </Layout>
   )
 };
@@ -85,8 +65,6 @@ const UserList = ({ data, searchText }) => {
 
   const onChange = page => {
     setCurrent(page)
-    // console.log(current, page, numPerPage, page*numPerPage, page*(numPerPage+1))
-    // console.log(data.slice(page*numPerPage, page*(numPerPage+1)))
   }
 
   return (
@@ -105,7 +83,7 @@ const UserList = ({ data, searchText }) => {
               title={
                 <React.Fragment>
                   <Link to={`/user/${item.login}`}>
-                    {item.name}{`   `}
+                    <a>{item.name}{`      `}</a>
                     {/*{getHighlightedText(item.name, searchText)}{`   `} */} 
                   </Link>
                   <span>{item.login}</span>

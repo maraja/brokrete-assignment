@@ -1,15 +1,24 @@
 import gql from "graphql-tag";
 import React, { Component, useState, useEffect } from "react";
 
-import { Form, Input, Button, Select, message, Layout, Tabs, Row, Col, Badge, Skeleton, Tag } from 'antd';
+import { Form, Typography, Pagination, Avatar, Input, Button, Select, message, Layout, Tabs, Row, Col, Badge, Skeleton, Tag } from 'antd';
 // import { Layout } from 'antd';
+const { Text } = Typography;
 
 const { TabPane } = Tabs;
 const { Header, Footer, Sider, Content } = Layout;
 
-import { StarOutlined, ForkOutlined } from '@ant-design/icons';
+import { 
+  StarOutlined, 
+  ForkOutlined, 
+  EnvironmentOutlined, 
+  MailOutlined, 
+  LinkOutlined,
+  UserOutlined } from '@ant-design/icons';
 
 import Container from '../Shared/Container'
+
+import { Link } from 'react-router-dom'
 
 
 import {formatError} from '#root/api/formatError'
@@ -63,26 +72,59 @@ const User = (props) => {
   return (
     <Layout style={{paddingTop: 50, background: 'white'}}>
       <Container>
-      <Sider style={{background: 'white'}}></Sider>
-      <Layout style={{background: 'white'}}>
-        <Content>
-          <Tabs defaultActiveKey="1" onChange={() => {}}>
+      <Row gutter={[48, 16]}>
+        <Col span={6} style={{background: 'white'}}>
+          {data &&
+            <React.Fragment>
+              <img style={{
+                width: '100%', 
+                margin: '25px 0',
+                borderRadius: '50%'}} src={data.avatarUrl} />
+
+              <h2>{data.name}</h2>
+              <p><Text type="secondary">{data.login}</Text></p>
+
+              <Button type="outlined" style={{width: '100%'}}>Follow</Button><br/>
+              <p style={{fontSize:12, marginTop:5}}>
+              <Text type="secondary">
+                <UserOutlined/> 
+                {data.followers.totalCount} followers - {` `} 
+                {data.following.totalCount} following - {` `} 
+                <StarOutlined /> {data.starredRepositories.totalCount}
+                </Text>
+              </p>
+              <Count margin="0 0" icon={<EnvironmentOutlined />} text={data.location} />
+              <br/><Count margin="0 0" icon={<MailOutlined />} text={data.email} />
+              <br/><Count margin="0 0" icon={<LinkOutlined />} text={<a href={data.url}>{data.url}</a>} />
+
+            </React.Fragment>
+          }
+          {!data && <Skeleton.Image />}
+          </Col>
+        <Col span={18} style={{background: 'white'}}>
+        <Tabs defaultActiveKey="1" onChange={() => {}}>
             <TabPane tab="Overview" key="1">
-              {data && <PopularRepositories repositories={data.topRepositories.nodes} />}
+              {data && 
+                <React.Fragment>
+                  <h2>Popular Repositories</h2>
+                  <PopularRepositories repositories={data.topRepositories.nodes} />
+                </React.Fragment>
+              }
               {!data && <Skeleton active />}
             </TabPane>
-            <TabPane tab={`Repositories ${data ? "("+data.topRepositories.totalCount+")" : ''}`} key="2">
-              Content of Tab Pane 2
+            <TabPane tab={`Repositories ${data ? "("+data.repositories.totalCount+")" : ''}`} key="2">
+              Nothing to see here yet :(!
             </TabPane>
             <TabPane tab="Projects" key="3">
-              Content of Tab Pane 3
+              Nothing to see here yet :(!
             </TabPane>
             <TabPane tab="Packages" key="4">
-              Content of Tab Pane 4
+              Nothing to see here yet :(!
             </TabPane>
           </Tabs>
-        </Content>
-      </Layout>
+          </Col>
+      </Row>
+          
       </Container>
     </Layout>
   )
@@ -91,15 +133,24 @@ const User = (props) => {
 export default User;
 
 const PopularRepositories = ({repositories}) => {
+  let [current, setCurrent] = useState(1)
+
+  let numPerPage = 6
+
+  const onChange = page => {
+    setCurrent(page)
+  }
 
   return (
     <div> 
       <Row gutter={[16, 16]}>
-        {repositories.map(r => (
+        {repositories.slice(current*numPerPage, current*numPerPage + numPerPage).map(r => (
           <Col span={12}>
             <RepositoryCard repository={r} />
           </Col>
         ))}
+        <br/><br/>
+        <Pagination current={current} onChange={onChange} total={repositories.length} hideOnSinglePage={true} size={"small"} showSizeChanger={false}/>
       </Row>
     </div>
   )
@@ -107,8 +158,8 @@ const PopularRepositories = ({repositories}) => {
 
 const RepositoryCard = ({repository}) => (
   <div style={{ border: 'solid 1px #eee', padding: '10px 20px 0px 20px', borderRadius: 5 }}>
-    <h3>{repository.name}</h3>
-    <p>{repository.description}</p>
+    <h3><Link to={repository.url}>{repository.name}</Link></h3>
+    <p><Text type="secondary" style={{marginBottom: 10}}>{repository.description}</Text></p>
     <p>
       { repository.primaryLanguage && <Badge color={repository.primaryLanguage.color} text={repository.primaryLanguage.name}/> }
       <Count text={repository.stargazers.totalCount} icon={<StarOutlined />}/>
@@ -117,8 +168,8 @@ const RepositoryCard = ({repository}) => (
   </div>
 )
 
-const Count = ({ text, icon }) => (
-  <span style={{margin: '0 5px'}}>{icon} {text}</span>
+const Count = ({ text, icon, margin }) => (
+  <span style={{margin: margin || '0 10px'}}>{icon} {text}</span>
 )
 
 const queryUser = username => `
@@ -131,7 +182,7 @@ const queryUser = username => `
     name
     login
     location
-    topRepositories(orderBy: {field: CREATED_AT, direction: ASC}, first: 10) {
+    topRepositories(orderBy: {field: CREATED_AT, direction: ASC}, first: 50) {
       nodes {
         pullRequests {
           totalCount
@@ -160,6 +211,20 @@ const queryUser = username => `
       }
       totalCount
     }
+    url
+    followers {
+      totalCount
+    }
+    following {
+      totalCount
+    }
+    repositories {
+      totalCount
+    }
+    starredRepositories {
+      totalCount
+    }
   }
 }
+
 `
